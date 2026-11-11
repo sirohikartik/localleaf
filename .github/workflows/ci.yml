@@ -1,0 +1,41 @@
+name: LocalLeaf CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install TeX Live
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends \
+            texlive-latex-base \
+            texlive-latex-recommended \
+            texlive-fonts-recommended \
+            texlive-publishers \
+            texlive-science
+
+      - name: Verify TeX Compilers
+        run: |
+          pdflatex --version
+          bibtex --version
+
+      - name: Run LaTeX Template Compiler Tests
+        run: node test/test-all-templates.js
+
+      - name: Run REST API Integration Tests
+        run: node test/test-api.js
