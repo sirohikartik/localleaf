@@ -1,0 +1,235 @@
+/**
+ * LocalLeaf LaTeX Code Editor Styles
+ */
+
+/* Editor Header & Tabs */
+.editor-toolbar {
+  height: 38px;
+  background-color: var(--bg-secondary);
+  border-bottom: 1px solid var(--bg-border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 8px;
+  user-select: none;
+  flex-shrink: 0;
+  gap: 8px;
+}
+
+.file-tab-bar {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  overflow-x: auto;
+  max-width: 60%;
+}
+
+.file-tab {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 10px;
+  font-size: 12.5px;
+  color: var(--text-secondary);
+  background: transparent;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  white-space: nowrap;
+  border: 1px solid transparent;
+  transition: all 0.15s ease;
+}
+
+.file-tab:hover {
+  background-color: var(--bg-hover);
+  color: var(--text-primary);
+}
+
+.file-tab.active {
+  background-color: var(--bg-editor);
+  color: var(--text-primary);
+  font-weight: 500;
+  border-color: var(--bg-border);
+  box-shadow: var(--shadow-sm);
+}
+
+.tab-icon {
+  font-size: 12px;
+}
+
+/* LaTeX Snippet Quick Tools */
+.editor-snippet-tools {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+}
+
+.tool-btn {
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: var(--radius-sm);
+  color: var(--text-secondary);
+  padding: 4px 6px;
+  font-size: 12px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.12s ease;
+}
+
+.tool-btn:hover {
+  background-color: var(--bg-hover);
+  border-color: var(--bg-border);
+  color: var(--text-primary);
+}
+
+.tool-separator {
+  width: 1px;
+  height: 18px;
+  background-color: var(--bg-border);
+  margin: 0 4px;
+}
+
+/* Editor Main Body */
+.editor-body {
+  display: flex;
+  flex: 1 1 auto;
+  position: relative;
+  overflow: hidden;
+  background-color: var(--bg-editor);
+  font-family: var(--font-mono);
+  font-size: var(--editor-font-size);
+  line-height: var(--editor-line-height);
+}
+
+/* Line Number Gutter */
+.editor-gutter {
+  width: 52px;
+  background-color: var(--bg-gutter);
+  border-right: 1px solid var(--bg-border);
+  padding: 12px 0;
+  color: var(--text-muted);
+  user-select: none;
+  text-align: right;
+  flex-shrink: 0;
+  overflow: hidden;
+  position: relative;
+}
+
+.gutter-line {
+  padding: 0 8px 0 20px;
+  height: calc(var(--editor-font-size) * var(--editor-line-height));
+  box-sizing: border-box;
+  font-size: 11.5px;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+}
+
+.gutter-marker {
+  position: absolute;
+  left: 4px;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  cursor: pointer;
+}
+
+.gutter-marker.error {
+  background-color: var(--color-error);
+  box-shadow: 0 0 4px var(--color-error);
+}
+
+.gutter-marker.warning {
+  background-color: var(--color-warning);
+  box-shadow: 0 0 4px var(--color-warning);
+}
+
+/* Code Area: Container for Syntax Overlay and Native Textarea */
+.editor-area-wrapper {
+  position: relative;
+  flex: 1 1 auto;
+  height: 100%;
+  overflow: hidden;
+}
+
+.editor-highlight-layer,
+.editor-textarea {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  padding: 12px 14px;
+  margin: 0;
+  border: none;
+  font-family: var(--font-mono);
+  font-size: var(--editor-font-size);
+  line-height: var(--editor-line-height);
+  white-space: pre-wrap;
+  word-wrap: break-word;
+  tab-size: 2;
+  box-sizing: border-box;
+  overflow-y: scroll;
+}
+
+.editor-textarea {
+  color: transparent;
+  background: transparent;
+  caret-color: var(--text-primary);
+  resize: none;
+  outline: none;
+  z-index: 2;
+}
+
+.editor-highlight-layer {
+  color: var(--text-primary);
+  background: var(--bg-editor);
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* Syntax Highlighting Tokens */
+.syn-cmd {
+  color: var(--syn-command);
+  font-weight: 600;
+}
+
+.syn-env {
+  color: var(--syn-environment);
+  font-weight: 600;
+}
+
+.syn-math {
+  color: var(--syn-math);
+}
+
+.syn-arg {
+  color: var(--syn-argument);
+}
+
+.syn-comment {
+  color: var(--syn-comment);
+  font-style: italic;
+}
+
+.syn-kw {
+  color: var(--syn-keyword);
+  font-weight: 500;
+}
+
+.syn-bracket {
+  color: var(--syn-bracket);
+  font-weight: bold;
+}
+
+.syn-num {
+  color: var(--syn-number);
+}
+
+/* Highlighted Error Line in Editor */
+.line-error-highlight {
+  background-color: var(--color-error-bg);
+  border-bottom: 1.5px dashed var(--color-error);
+}
