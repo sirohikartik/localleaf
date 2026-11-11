@@ -46,7 +46,7 @@ LocalLeaf brings the familiar, battle-tested split-screen workflow of **Overleaf
 ### Running LocalLeaf
 ```bash
 # Clone the repository
-git clone git@github-personal:sirohikartik/localleaf.git
+git clone https://github.com/sirohikartik/localleaf.git
 cd localleaf
 
 # Launch LocalLeaf
