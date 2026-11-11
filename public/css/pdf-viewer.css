@@ -1,0 +1,98 @@
+/**
+ * LocalLeaf Live PDF Viewer Styles
+ */
+
+.pdf-toolbar {
+  height: 38px;
+  background-color: var(--bg-secondary);
+  border-bottom: 1px solid var(--bg-border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 10px;
+  flex-shrink: 0;
+  user-select: none;
+}
+
+.pdf-controls-left, .pdf-controls-right {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.pdf-tool-btn {
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: var(--radius-sm);
+  color: var(--text-secondary);
+  padding: 4px 8px;
+  font-size: 12px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  transition: all 0.12s ease;
+}
+
+.pdf-tool-btn:hover {
+  background-color: var(--bg-hover);
+  border-color: var(--bg-border);
+  color: var(--text-primary);
+}
+
+.pdf-zoom-label {
+  font-size: 11.5px;
+  font-family: var(--font-mono);
+  color: var(--text-secondary);
+  min-width: 44px;
+  text-align: center;
+}
+
+/* PDF Preview Frame */
+.pdf-viewport {
+  flex: 1 1 auto;
+  position: relative;
+  background-color: #525659;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.pdf-embed-frame {
+  width: 100%;
+  height: 100%;
+  border: none;
+  background: transparent;
+}
+
+/* Empty State */
+.pdf-empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 32px;
+  color: var(--text-muted);
+}
+
+.pdf-empty-icon {
+  font-size: 48px;
+  margin-bottom: 16px;
+  opacity: 0.6;
+}
+
+.pdf-empty-title {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 6px;
+}
+
+.pdf-empty-desc {
+  font-size: 13px;
+  max-width: 280px;
+  line-height: 1.4;
+  margin-bottom: 20px;
+}
