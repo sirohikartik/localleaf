@@ -1,0 +1,141 @@
+/**
+ * LocalLeaf File Tree Sidebar Styles
+ */
+
+.sidebar-header {
+  height: 38px;
+  background-color: var(--bg-secondary);
+  border-bottom: 1px solid var(--bg-border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 10px;
+  flex-shrink: 0;
+}
+
+.sidebar-title {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--text-secondary);
+}
+
+.sidebar-actions {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+}
+
+.sidebar-btn {
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: var(--radius-sm);
+  color: var(--text-secondary);
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.12s ease;
+}
+
+.sidebar-btn:hover {
+  background-color: var(--bg-hover);
+  color: var(--text-primary);
+}
+
+/* File Tree List */
+.file-tree-container {
+  flex: 1 1 auto;
+  overflow-y: auto;
+  padding: 6px 4px;
+}
+
+.tree-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 5px 8px;
+  border-radius: var(--radius-sm);
+  font-size: 13px;
+  color: var(--text-primary);
+  cursor: pointer;
+  transition: background-color 0.1s ease;
+  user-select: none;
+  position: relative;
+}
+
+.tree-item:hover {
+  background-color: var(--bg-hover);
+}
+
+.tree-item.active {
+  background-color: var(--ol-green-light);
+  color: var(--ol-green-primary);
+  font-weight: 600;
+}
+
+[data-theme="dark"] .tree-item.active {
+  background-color: rgba(19, 138, 54, 0.2);
+}
+
+.tree-item-icon {
+  font-size: 14px;
+  flex-shrink: 0;
+  width: 16px;
+  text-align: center;
+}
+
+.tree-item-name {
+  flex: 1 1 auto;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.tree-item-main-badge {
+  font-size: 9px;
+  background-color: var(--ol-green-primary);
+  color: #ffffff;
+  padding: 1px 4px;
+  border-radius: 3px;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.tree-item-actions {
+  display: none;
+  align-items: center;
+  gap: 2px;
+}
+
+.tree-item:hover .tree-item-actions {
+  display: flex;
+}
+
+.item-action-btn {
+  background: transparent;
+  border: none;
+  color: var(--text-secondary);
+  width: 18px;
+  height: 18px;
+  border-radius: var(--radius-sm);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 11px;
+}
+
+.item-action-btn:hover {
+  background-color: var(--bg-active);
+  color: var(--color-error);
+}
+
+/* Dropzone Overlay for Drag-and-Drop */
+.file-tree-container.drag-over {
+  border: 2px dashed var(--ol-green-primary);
+  background-color: var(--ol-green-light);
+}
