@@ -66,6 +66,7 @@ class App {
       projectsGrid: document.getElementById('projectsGrid'),
       searchInput: document.getElementById('dashboardSearchInput'),
       btnNewProject: document.getElementById('btnNewProject'),
+      btnOpenFolder: document.getElementById('btnOpenFolder'),
       onOpenProject: (id) => {
         window.location.hash = `#/project/${id}`;
       }

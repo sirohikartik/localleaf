@@ -8,6 +8,7 @@ export class Dashboard {
     this.projectsGrid = options.projectsGrid;
     this.searchInput = options.searchInput;
     this.btnNewProject = options.btnNewProject;
+    this.btnOpenFolder = options.btnOpenFolder;
     this.onOpenProject = options.onOpenProject || (() => {});
 
     this.projects = [];
@@ -31,7 +32,33 @@ export class Dashboard {
       });
     }
 
+    if (this.btnOpenFolder) {
+      this.btnOpenFolder.addEventListener('click', () => {
+        this.promptOpenFolder();
+      });
+    }
+
     await this.loadTemplates();
+  }
+
+  async promptOpenFolder() {
+    const dirPath = prompt('Enter the path to an existing folder on your computer:\n(e.g. /Users/kartiksirohi/my-paper or ./paper)');
+    if (!dirPath || !dirPath.trim()) return;
+
+    try {
+      const res = await fetch('/api/open', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ path: dirPath.trim() })
+      });
+      const data = await res.json();
+      if (!res.ok || !data.success) {
+        throw new Error(data.error || 'Failed to open directory');
+      }
+      this.onOpenProject(data.project.id);
+    } catch (err) {
+      alert('Error opening folder: ' + err.message);
+    }
   }
 
   async loadTemplates() {
@@ -99,9 +126,9 @@ export class Dashboard {
         <p class="card-desc">${escapeHtml(project.description || 'LaTeX Project')}</p>
         <div class="card-footer">
           <span class="card-badge ${project.hasPdf ? 'has-pdf' : ''}">
-            ${project.hasPdf ? '✓ PDF Ready' : '• ' + (templateInfo.name || 'LaTeX')}
+            ${project.isExternal ? '📁 Folder' : (project.hasPdf ? '✓ PDF Ready' : '• ' + (templateInfo.name || 'LaTeX'))}
           </span>
-          <span>Updated ${dateFormatted}</span>
+          <span title="${project.externalDir || ''}">Updated ${dateFormatted}</span>
         </div>
       `;
 
