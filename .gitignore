@@ -1,0 +1,24 @@
+# Node and System
+node_modules/
+.DS_Store
+*.log
+.env
+
+# LaTeX auxiliary files in projects
+projects/*/*.aux
+projects/*/*.log
+projects/*/*.out
+projects/*/*.toc
+projects/*/*.bbl
+projects/*/*.blg
+projects/*/*.synctex.gz
+projects/*/*.fls
+projects/*/*.fdb_latexmk
+projects/*/*.nav
+projects/*/*.snm
+projects/*/*.vrb
+projects/*/*.lot
+projects/*/*.lof
+
+# LocalLeaf user data (keep sample projects if desired, ignore local cache)
+.localleaf-cache/
