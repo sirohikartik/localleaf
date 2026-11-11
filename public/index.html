@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>LocalLeaf — Offline Overleaf Clone</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🌿</text></svg>">
+  
+  <!-- Stylesheets -->
+  <link rel="stylesheet" href="/css/variables.css">
+  <link rel="stylesheet" href="/css/layout.css">
+  <link rel="stylesheet" href="/css/dashboard.css">
+  <link rel="stylesheet" href="/css/editor.css">
+  <link rel="stylesheet" href="/css/filetree.css">
+  <link rel="stylesheet" href="/css/pdf-viewer.css">
+  <link rel="stylesheet" href="/css/logs.css">
+  <link rel="stylesheet" href="/css/components.css">
+</head>
+<body>
+
+  <div id="app">
+    
+    <!-- ==================== DASHBOARD VIEW ==================== -->
+    <div id="viewDashboard" class="view-container dashboard-view">
+      <header class="dashboard-header">
+        <div class="dashboard-title-group">
+          <h1>
+            <span style="font-size: 26px;">🌿</span>
+            LocalLeaf
+            <span class="brand-tag">Offline</span>
+          </h1>
+          <p>Zero-bloat, local-first LaTeX workspace powered by native system compilers</p>
+        </div>
+        <div class="dashboard-actions">
+          <div class="search-input-wrap">
+            <svg viewBox="0 0 16 16"><path d="M11.5 7a4.5 4.5 0 1 1-9 0 4.5 4.5 0 0 1 9 0zm-.82 4.74a6 6 0 1 0-1.06 1.06l3.66 3.66a.75.75 0 1 0 1.06-1.06l-3.66-3.66z"/></svg>
+            <input type="text" id="dashboardSearchInput" class="search-input" placeholder="Search projects..." />
+          </div>
+          <button id="btnNewProject" class="btn-primary">
+            <span>+</span>
+            <span>New Project</span>
+          </button>
+        </div>
+      </header>
+
+      <main class="dashboard-content">
+        <div id="projectsGrid" class="projects-grid">
+          <!-- Dynamically populated project cards -->
+        </div>
+      </main>
+    </div>
+
+
+    <!-- ==================== WORKSPACE / EDITOR VIEW ==================== -->
+    <div id="viewWorkspace" class="view-container hidden">
+      
+      <!-- Top Navigation Bar -->
+      <nav class="top-nav">
+        <div class="nav-left">
+          <button id="btnOpenMenu" class="tool-btn" title="Project Menu & Settings" style="font-size: 15px; padding: 4px 8px;">
+            ☰ Menu
+          </button>
+          
+          <button id="btnBackToDashboard" class="btn-back" title="Back to All Projects">
+            ‹ Projects
+          </button>
+
+          <div class="project-title-container">
+            <input type="text" id="projectTitleInput" class="project-title-input" value="Untitled Project" title="Click to rename" />
+          </div>
+        </div>
+
+        <div class="nav-center">
+          <button id="btnRecompile" class="btn-recompile" title="Compile LaTeX Document (⌘+Enter)">
+            <span class="recompile-icon">▶</span>
+            <span>Recompile</span>
+            <span class="recompile-shortcut">⌘↵</span>
+          </button>
+
+          <div id="recompileStatusPill" class="status-pill success" style="display: none; cursor: pointer;" title="Click to view compilation logs">
+            Ready
+          </div>
+        </div>
+
+        <div class="nav-right">
+          <button id="btnToggleLogs" class="tool-btn" title="Toggle Logs & Output Console">
+            <span>Logs</span>
+            <span id="logsErrorsBadge" class="error-badge-pill error" style="display: none;">0</span>
+            <span id="logsWarningsBadge" class="error-badge-pill warning" style="display: none;">0</span>
+          </button>
+
+          <button id="btnPdfDownload" class="tool-btn" title="Download Compiled PDF">
+            ⬇ PDF
+          </button>
+        </div>
+      </nav>
+
+      <!-- 3-Pane Split Workspace -->
+      <div class="workspace-container">
+        
+        <!-- Left Pane: File Tree Explorer -->
+        <aside id="paneSidebar" class="pane-sidebar">
+          <div class="sidebar-header">
+            <span class="sidebar-title">Project Files</span>
+            <div class="sidebar-actions">
+              <button id="btnNewFile" class="sidebar-btn" title="New File">+</button>
+              <button id="btnNewFolder" class="sidebar-btn" title="New Folder">📁</button>
+              <button id="btnUploadFile" class="sidebar-btn" title="Upload File or Image">⬆</button>
+              <input type="file" id="fileUploadInput" multiple style="display: none;" />
+            </div>
+          </div>
+          <div id="fileTreeContainer" class="file-tree-container">
+            <!-- Files loaded dynamically -->
+          </div>
+        </aside>
+
+        <!-- Sidebar Resizer -->
+        <div id="resizerSidebar" class="splitter" title="Drag to resize sidebar"></div>
+
+        <!-- Middle Pane: Code Editor -->
+        <main id="paneEditor" class="pane-editor">
+          <!-- Editor Tabs & Snippet Toolbar -->
+          <div class="editor-toolbar">
+            <div id="fileTabBar" class="file-tab-bar">
+              <div class="file-tab active">
+                <span class="tab-icon">📄</span>
+                <span>main.tex</span>
+              </div>
+            </div>
+
+            <div class="editor-snippet-tools">
+              <button id="btnToolSection" class="tool-btn" title="Insert Section">§ Sec</button>
+              <button id="btnToolBold" class="tool-btn" title="Bold (⌘B)"><strong>B</strong></button>
+              <button id="btnToolItalic" class="tool-btn" title="Italic (⌘I)"><em>I</em></button>
+              <div class="tool-separator"></div>
+              <button id="btnToolEquation" class="tool-btn" title="Insert Equation">∑</button>
+              <button id="btnToolItemize" class="tool-btn" title="Insert Itemize List">• List</button>
+              <button id="btnToolFigure" class="tool-btn" title="Insert Figure">🖼 Fig</button>
+              <button id="btnToolTable" class="tool-btn" title="Insert Table">▦ Tab</button>
+              <button id="btnToolCite" class="tool-btn" title="Insert Citation">Cite</button>
+            </div>
+          </div>
+
+          <!-- Code Editor Body -->
+          <div id="editorContainer" class="editor-body">
+            <div id="editorGutter" class="editor-gutter"></div>
+            <div class="editor-area-wrapper">
+              <pre id="editorHighlightLayer" class="editor-highlight-layer" aria-hidden="true"></pre>
+              <textarea id="editorTextarea" class="editor-textarea" spellcheck="false" autocomplete="off" autocorrect="off" autocapitalize="off"></textarea>
+            </div>
+          </div>
+        </main>
+
+        <!-- Editor/PDF Resizer -->
+        <div id="resizerEditor" class="splitter" title="Drag to resize preview"></div>
+
+        <!-- Right Pane: Live PDF Viewer -->
+        <section id="panePdf" class="pane-pdf">
+          <div class="pdf-toolbar">
+            <div class="pdf-controls-left">
+              <button id="btnPdfZoomOut" class="pdf-tool-btn" title="Zoom Out">−</button>
+              <span id="pdfZoomLabel" class="pdf-zoom-label">100%</span>
+              <button id="btnPdfZoomIn" class="pdf-tool-btn" title="Zoom In">+</button>
+              <button id="btnPdfFitWidth" class="pdf-tool-btn" title="Reset Zoom">Fit</button>
+            </div>
+            <div class="pdf-controls-right">
+              <span style="font-size: 11px; color: var(--text-muted);">PDF Viewer</span>
+            </div>
+          </div>
+
+          <div id="pdfViewport" class="pdf-viewport">
+            <!-- PDF iframe injected dynamically -->
+          </div>
+        </section>
+
+      </div>
+
+      <!-- Overleaf Bottom Logs & Output Drawer -->
+      <div id="logsDrawer" class="logs-drawer">
+        <div class="logs-header">
+          <div class="logs-tabs">
+            <button id="logsTabErrors" class="logs-tab-btn active">
+              Errors and Warnings
+            </button>
+            <button id="logsTabRaw" class="logs-tab-btn">
+              Raw Logs
+            </button>
+          </div>
+          <div style="display: flex; align-items: center; gap: 8px;">
+            <button id="btnClearAux" class="btn-secondary" style="padding: 3px 8px; font-size: 11px;" title="Purge .aux, .log, .toc, .synctex cache files">
+              Clear Cached Files
+            </button>
+            <button id="btnCloseLogs" class="btn-close-modal" title="Close Logs">✕</button>
+          </div>
+        </div>
+        <div id="logsContentArea" class="logs-content">
+          <!-- Diagnostics cards or raw log rendered dynamically -->
+        </div>
+      </div>
+
+      <!-- Bottom Status Bar -->
+      <footer class="bottom-status-bar">
+        <div class="status-left">
+          <span id="statusSave" class="status-item">Saved</span>
+          <span id="statusBarCursor" class="status-item">Ln 1, Col 1</span>
+        </div>
+        <div class="status-right">
+          <span id="statusProjectInfo" class="status-item">pdflatex</span>
+          <span class="status-item">LocalLeaf v1.0</span>
+        </div>
+      </footer>
+
+    </div>
+
+    <!-- ==================== OVERLEAF LEFT MENU DRAWER ==================== -->
+    <div id="menuDrawerOverlay" class="menu-drawer-overlay"></div>
+    <aside id="menuDrawer" class="menu-drawer">
+      <div class="drawer-header">
+        <h3 style="font-size: 15px; font-weight: 700; color: var(--text-primary);">Project Settings</h3>
+        <button id="btnCloseMenu" class="btn-close-modal">✕</button>
+      </div>
+      <div class="drawer-content">
+        
+        <div class="drawer-section">
+          <div class="drawer-section-title">Compilation Engine</div>
+          <div class="form-group">
+            <select id="drawerSelectCompiler" class="form-control">
+              <option value="pdflatex">pdfLaTeX (Recommended / Fastest)</option>
+              <option value="xelatex">XeLaTeX (Modern Fonts / Unicode)</option>
+            </select>
+          </div>
+
+          <div class="drawer-row" style="margin-top: 10px;">
+            <span class="drawer-label">Auto-compile</span>
+            <input type="checkbox" id="drawerToggleAutoCompile" checked style="accent-color: var(--ol-green-primary); transform: scale(1.2); cursor: pointer;" />
+          </div>
+        </div>
+
+        <div class="drawer-section">
+          <div class="drawer-section-title">Main Document</div>
+          <div class="form-group">
+            <select id="drawerSelectMainFile" class="form-control">
+              <option value="main.tex">main.tex</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="drawer-section">
+          <div class="drawer-section-title">Appearance</div>
+          <div class="form-group">
+            <select id="drawerSelectTheme" class="form-control">
+              <option value="light">Overleaf Classic (Light)</option>
+              <option value="dark">Overleaf Dark</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="drawer-section">
+          <div class="drawer-section-title">Statistics & Export</div>
+          <div style="display: flex; flex-direction: column; gap: 8px;">
+            <button id="drawerBtnWordCount" class="btn-secondary" style="width: 100%; text-align: left; padding: 8px 12px;">
+              📊 Word Count & Document Stats
+            </button>
+            <button id="drawerBtnDownloadZip" class="btn-secondary" style="width: 100%; text-align: left; padding: 8px 12px;">
+              📦 Download Source (.ZIP)
+            </button>
+            <button id="drawerBtnDownloadPdf" class="btn-secondary" style="width: 100%; text-align: left; padding: 8px 12px;">
+              📑 View / Download PDF
+            </button>
+          </div>
+        </div>
+
+        <div class="drawer-section" style="margin-top: 32px; border-top: 1px solid var(--bg-border); padding-top: 16px;">
+          <div style="font-size: 11.5px; color: var(--text-muted); line-height: 1.5;">
+            <strong>LocalLeaf</strong> — 100% Offline, Zero Bloat.<br>
+            Commits by: <code>sirohikartik</code>
+          </div>
+        </div>
+
+      </div>
+    </aside>
+
+  </div>
+
+  <!-- Entry Script -->
+  <script type="module" src="/js/app.js"></script>
+</body>
+</html>
