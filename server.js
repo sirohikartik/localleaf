@@ -16,6 +16,8 @@ import {
   getProject,
   updateProject,
   deleteProject,
+  openDirectoryAsProject,
+  getProjectDirectory,
   readProjectFile,
   writeProjectFile,
   createProjectDirectory,
@@ -179,6 +181,20 @@ async function handleRequest(req, res) {
       return sendJson(res, 200, templatesList);
     }
 
+    // POST /api/open (Open existing local directory as project)
+    if (method === 'POST' && pathname === '/api/open') {
+      const body = await parseBody(req);
+      if (!body.path) {
+        return sendError(res, 400, 'Missing directory path');
+      }
+      try {
+        const project = await openDirectoryAsProject(body.path);
+        return sendJson(res, 200, { success: true, project });
+      } catch (err) {
+        return sendError(res, 400, err.message);
+      }
+    }
+
     // GET /api/projects
     if (method === 'GET' && pathname === '/api/projects') {
       const projects = await listProjects();
@@ -280,7 +296,9 @@ async function handleRequest(req, res) {
 
       // POST /api/projects/:id/clean
       if (method === 'POST' && subPath === 'clean') {
-        const projectDir = path.join(PROJECTS_ROOT, projectId);
+        const project = await getProject(projectId);
+        if (!project) return sendError(res, 404, 'Project not found');
+        const projectDir = await getProjectDirectory(project);
         const resClean = await cleanAuxFiles(projectDir);
         return sendJson(res, 200, resClean);
       }
@@ -342,7 +360,7 @@ async function handleRequest(req, res) {
 
         const engine = body.engine || project.compiler || 'pdflatex';
         const mainFile = body.mainFile || project.mainFile || 'main.tex';
-        const projectDir = path.join(PROJECTS_ROOT, projectId);
+        const projectDir = await getProjectDirectory(project);
 
         const result = await compileProject(projectDir, {
           engine,
@@ -359,7 +377,8 @@ async function handleRequest(req, res) {
         if (!project) return sendError(res, 404, 'Project not found');
 
         const mainBase = path.basename(project.mainFile || 'main.tex', '.tex');
-        const pdfPath = path.join(PROJECTS_ROOT, projectId, `${mainBase}.pdf`);
+        const projectDir = await getProjectDirectory(project);
+        const pdfPath = path.join(projectDir, `${mainBase}.pdf`);
 
         try {
           const stats = await fs.stat(pdfPath);
@@ -384,7 +403,8 @@ async function handleRequest(req, res) {
         if (!project) return sendError(res, 404, 'Project not found');
 
         const mainBase = path.basename(project.mainFile || 'main.tex', '.tex');
-        const logPath = path.join(PROJECTS_ROOT, projectId, `${mainBase}.log`);
+        const projectDir = await getProjectDirectory(project);
+        const logPath = path.join(projectDir, `${mainBase}.log`);
 
         try {
           const logContent = await fs.readFile(logPath, 'utf8');
@@ -409,6 +429,16 @@ async function handleRequest(req, res) {
 const server = http.createServer(handleRequest);
 
 await initStorage();
+
+let initialOpenProject = null;
+if (process.env.OPEN_DIR) {
+  try {
+    initialOpenProject = await openDirectoryAsProject(process.env.OPEN_DIR);
+    console.log(`[LocalLeaf] Opened folder "${process.env.OPEN_DIR}" as project: ${initialOpenProject.id}`);
+  } catch (err) {
+    console.error(`[LocalLeaf] Could not open initial folder "${process.env.OPEN_DIR}":`, err.message);
+  }
+}
 
 server.listen(PORT, HOST, () => {
   console.log(`
