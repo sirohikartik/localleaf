@@ -275,6 +275,12 @@ class App {
       this.fileUploadInput.click();
     });
 
+    // Shortcuts & Help Modal
+    const btnShortcutsHelp = document.getElementById('btnShortcutsHelp');
+    if (btnShortcutsHelp) {
+      btnShortcutsHelp.addEventListener('click', () => this.showShortcutsModal());
+    }
+
     this.fileUploadInput.addEventListener('change', async (e) => {
       if (e.target.files && e.target.files.length > 0) {
         for (const file of e.target.files) {
@@ -436,6 +442,114 @@ class App {
     const res = await fetch(`/api/projects/${this.currentProjectId}`);
     this.currentProject = await res.json();
     this.fileTree.setProject(this.currentProjectId, this.currentProject.files, this.currentProject.mainFile);
+  }
+
+  showShortcutsModal() {
+    let modalEl = document.getElementById('shortcutsModal');
+    if (!modalEl) {
+      modalEl = document.createElement('div');
+      modalEl.id = 'shortcutsModal';
+      modalEl.className = 'modal-overlay';
+      document.body.appendChild(modalEl);
+    }
+
+    modalEl.innerHTML = `
+      <div class="modal-dialog" style="max-width: 640px;">
+        <div class="modal-header">
+          <h3>Keyboard Shortcuts & \\LaTeX{} Reference</h3>
+          <button class="btn-close-modal" id="closeShortcutsModalBtn">✕</button>
+        </div>
+        <div class="modal-body" style="max-height: 75vh; overflow-y: auto;">
+          <h4 style="font-size: 13px; font-weight: 700; margin-bottom: 8px; color: var(--text-primary);">Editor Shortcuts</h4>
+          <table class="shortcuts-table" style="margin-bottom: 20px;">
+            <thead>
+              <tr>
+                <th>Action</th>
+                <th>Shortcut</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Recompile Document</td>
+                <td><kbd>⌘</kbd> / <kbd>Ctrl</kbd> + <kbd>Enter</kbd></td>
+              </tr>
+              <tr>
+                <td>Save Active File</td>
+                <td><kbd>⌘</kbd> / <kbd>Ctrl</kbd> + <kbd>S</kbd></td>
+              </tr>
+              <tr>
+                <td>Bold Selection</td>
+                <td><kbd>⌘</kbd> / <kbd>Ctrl</kbd> + <kbd>B</kbd> &nbsp; (<code>\\textbf{...}</code>)</td>
+              </tr>
+              <tr>
+                <td>Italic Selection</td>
+                <td><kbd>⌘</kbd> / <kbd>Ctrl</kbd> + <kbd>I</kbd> &nbsp; (<code>\\textit{...}</code>)</td>
+              </tr>
+              <tr>
+                <td>Inline Math Selection</td>
+                <td><kbd>⌘</kbd> / <kbd>Ctrl</kbd> + <kbd>K</kbd> &nbsp; (<code>$...$</code>)</td>
+              </tr>
+              <tr>
+                <td>Indent / Unindent 2 spaces</td>
+                <td><kbd>Tab</kbd> / <kbd>Shift</kbd> + <kbd>Tab</kbd></td>
+              </tr>
+              <tr>
+                <td>Auto-close brackets</td>
+                <td><kbd>{</kbd>, <kbd>[</kbd>, <kbd>(</kbd>, <kbd>$</kbd></td>
+              </tr>
+            </tbody>
+          </table>
+
+          <h4 style="font-size: 13px; font-weight: 700; margin-bottom: 8px; color: var(--text-primary);">Common \\LaTeX{} Snippets</h4>
+          <table class="shortcuts-table">
+            <thead>
+              <tr>
+                <th>Construct</th>
+                <th>Syntax</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Section Header</td>
+                <td><code>\\section{Title}</code></td>
+              </tr>
+              <tr>
+                <td>Numbered Equation</td>
+                <td><code>\\begin{equation} ... \\end{equation}</code></td>
+              </tr>
+              <tr>
+                <td>Bullet List</td>
+                <td><code>\\begin{itemize} \\item ... \\end{itemize}</code></td>
+              </tr>
+              <tr>
+                <td>Figure with Caption</td>
+                <td><code>\\begin{figure}[htbp] ... \\end{figure}</code></td>
+              </tr>
+              <tr>
+                <td>Citation</td>
+                <td><code>\\cite{key}</code></td>
+              </tr>
+              <tr>
+                <td>Cross-Reference</td>
+                <td><code>\\ref{label}</code></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="modal-footer">
+          <button class="btn-primary" id="doneShortcutsModalBtn">Got it</button>
+        </div>
+      </div>
+    `;
+
+    modalEl.classList.add('open');
+
+    const close = () => modalEl.classList.remove('open');
+    modalEl.querySelector('#closeShortcutsModalBtn').addEventListener('click', close);
+    modalEl.querySelector('#doneShortcutsModalBtn').addEventListener('click', close);
+    modalEl.addEventListener('click', (e) => {
+      if (e.target === modalEl) close();
+    });
   }
 
   showNewFileDialog() {
