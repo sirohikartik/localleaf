@@ -49,11 +49,31 @@ LocalLeaf brings the familiar, battle-tested split-screen workflow of **Overleaf
 git clone https://github.com/sirohikartik/localleaf.git
 cd localleaf
 
+# Make the CLI command globally available (optional)
+npm link
+
 # Launch LocalLeaf
-npm start
-# or use the CLI binary:
-./bin/localleaf
+localleaf
 ```
+
+### Opening Existing Folders from CLI
+You can open any existing folder containing LaTeX documents directly from your terminal:
+
+```bash
+# Open an existing folder from parent directory:
+localleaf my-paper
+
+# Open the current directory:
+localleaf .
+
+# Open any absolute or relative path:
+localleaf ~/Documents/thesis
+```
+
+- If LocalLeaf is already running, it **instantly opens that folder** in your browser without restarting the server.
+- Automatically detects `main.tex` or the primary `.tex` file in the folder.
+- All edits and compiled PDFs are saved **directly in your folder on disk**.
+- Removing an external folder project from the LocalLeaf UI preserves your source files untouched.
 
 LocalLeaf will start at `http://127.0.0.1:3000` and automatically open your default web browser.
 
