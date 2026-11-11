@@ -1,0 +1,130 @@
+/**
+ * LocalLeaf Design Tokens & Themes
+ * Faithful recreation of Overleaf visual design language
+ */
+
+:root {
+  /* Overleaf Classic Brand Palette */
+  --ol-green-primary: #138a36;
+  --ol-green-hover: #0f6e2b;
+  --ol-green-active: #0c5622;
+  --ol-green-light: #e8f5e9;
+  --ol-green-badge: #2e7d32;
+
+  /* Neutrals & Surfaces (Light / Default) */
+  --bg-primary: #ffffff;
+  --bg-secondary: #f7f9fa;
+  --bg-tertiary: #edf1f3;
+  --bg-editor: #ffffff;
+  --bg-gutter: #f4f6f8;
+  --bg-hover: #e5eaee;
+  --bg-active: #d6dde2;
+  --bg-border: #d0d7de;
+  --bg-border-light: #e1e4e8;
+
+  /* Typography */
+  --text-primary: #1c232b;
+  --text-secondary: #57606a;
+  --text-muted: #8c959f;
+  --text-inverted: #ffffff;
+
+  /* Status Colors */
+  --color-error: #cf222e;
+  --color-error-bg: #ffebe9;
+  --color-error-border: #ff8182;
+  --color-warning: #9a6700;
+  --color-warning-bg: #fff8c5;
+  --color-warning-border: #d4a72c;
+  --color-info: #0969da;
+  --color-info-bg: #ddf4ff;
+  --color-success: #1a7f37;
+  --color-success-bg: #dafbe1;
+
+  /* Editor Syntax Colors (Light) */
+  --syn-command: #0550ae;
+  --syn-environment: #8250df;
+  --syn-math: #116329;
+  --syn-argument: #953800;
+  --syn-comment: #6e7781;
+  --syn-keyword: #cf222e;
+  --syn-bracket: #24292f;
+  --syn-number: #0969da;
+
+  /* Typography & Sizing */
+  --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --font-mono: "SF Mono", Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+  --editor-font-size: 13.5px;
+  --editor-line-height: 1.55;
+
+  /* Shadows */
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.08);
+  --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.12);
+  --shadow-popover: 0 12px 32px rgba(0, 0, 0, 0.16);
+
+  /* Dimensions */
+  --header-height: 48px;
+  --sidebar-min-width: 200px;
+  --sidebar-default-width: 240px;
+  --editor-min-width: 320px;
+  --pdf-min-width: 320px;
+  --radius-sm: 4px;
+  --radius-md: 6px;
+  --radius-lg: 8px;
+  --radius-full: 9999px;
+}
+
+/* Dark Theme */
+[data-theme="dark"] {
+  --bg-primary: #1e1e1e;
+  --bg-secondary: #252526;
+  --bg-tertiary: #2d2d30;
+  --bg-editor: #1e1e1e;
+  --bg-gutter: #252526;
+  --bg-hover: #333337;
+  --bg-active: #3e3e42;
+  --bg-border: #3c3c3c;
+  --bg-border-light: #2d2d30;
+
+  --text-primary: #cccccc;
+  --text-secondary: #969696;
+  --text-muted: #6e6e6e;
+  --text-inverted: #ffffff;
+
+  --color-error: #f85149;
+  --color-error-bg: rgba(248, 81, 73, 0.15);
+  --color-error-border: #da3633;
+  --color-warning: #e3b341;
+  --color-warning-bg: rgba(227, 179, 65, 0.15);
+  --color-warning-border: #9e6a03;
+  --color-info: #58a6ff;
+  --color-info-bg: rgba(56, 139, 253, 0.15);
+  --color-success: #3fb950;
+  --color-success-bg: rgba(46, 160, 67, 0.15);
+
+  --syn-command: #4ec9b0;
+  --syn-environment: #c586c0;
+  --syn-math: #9cdcfe;
+  --syn-argument: #ce9178;
+  --syn-comment: #6a9955;
+  --syn-keyword: #569cd6;
+  --syn-bracket: #d4d4d4;
+  --syn-number: #b5cea8;
+}
+
+/* Reset and Global Base */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html, body {
+  width: 100%;
+  height: 100%;
+  font-family: var(--font-sans);
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  overflow: hidden;
+  -webkit-font-smoothing: antialiased;
+}
