@@ -2,10 +2,17 @@
 
 /**
  * LocalLeaf CLI Launcher
+ * Usage:
+ *   localleaf [folder_path]
+ *   localleaf .
+ *   localleaf my-paper
  */
 
 import { spawn } from 'node:child_process';
+import http from 'node:http';
+import fs from 'node:fs';
 import path from 'node:path';
+import crypto from 'node:crypto';
 import { fileURLToPath } from 'node:url';
 
 const __filename = fileURLToPath(import.meta.url);
@@ -15,22 +22,153 @@ const serverPath = path.join(rootDir, 'server.js');
 
 const port = process.env.PORT || 3000;
 const host = process.env.HOST || '127.0.0.1';
-const url = `http://${host}:${port}`;
+const baseUrl = `http://${host}:${port}`;
 
-console.log(`Starting LocalLeaf on ${url}...`);
+const args = process.argv.slice(2);
 
-const child = spawn(process.execPath, [serverPath], {
-  cwd: rootDir,
-  stdio: 'inherit',
-  env: process.env
-});
+// Handle help flag
+if (args.includes('--help') || args.includes('-h')) {
+  console.log(`
+🌿 LocalLeaf CLI
 
-// Try to open default browser after brief pause
-setTimeout(() => {
+Usage:
+  localleaf                  Open LocalLeaf dashboard in your browser
+  localleaf <folder>         Open an existing folder directly as a project
+  localleaf .                Open current working directory in LocalLeaf
+
+Examples:
+  localleaf .
+  localleaf ./my-latex-paper
+  localleaf ~/Documents/thesis
+`);
+  process.exit(0);
+}
+
+const targetFolderArg = args[0];
+let targetAbsPath = null;
+let projectUrl = baseUrl;
+
+if (targetFolderArg) {
+  targetAbsPath = path.resolve(process.cwd(), targetFolderArg);
+  if (!fs.existsSync(targetAbsPath)) {
+    console.error(`❌ Error: Directory not found: "${targetAbsPath}"`);
+    process.exit(1);
+  }
+  const stats = fs.statSync(targetAbsPath);
+  if (!stats.isDirectory()) {
+    console.error(`❌ Error: Path is not a directory: "${targetAbsPath}"`);
+    process.exit(1);
+  }
+}
+
+/**
+ * Check if LocalLeaf server is already running
+ */
+function checkServerRunning() {
+  return new Promise((resolve) => {
+    const req = http.get(`${baseUrl}/api/system`, { timeout: 400 }, (res) => {
+      resolve(res.statusCode === 200);
+    });
+    req.on('error', () => resolve(false));
+    req.on('timeout', () => {
+      req.destroy();
+      resolve(false);
+    });
+  });
+}
+
+/**
+ * Send request to running server to open directory
+ */
+function sendOpenRequest(dirPath) {
+  return new Promise((resolve, reject) => {
+    const payload = JSON.stringify({ path: dirPath });
+    const req = http.request(`${baseUrl}/api/open`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Content-Length': Buffer.byteLength(payload)
+      },
+      timeout: 3000
+    }, (res) => {
+      let data = '';
+      res.on('data', chunk => data += chunk);
+      res.on('end', () => {
+        try {
+          resolve(JSON.parse(data));
+        } catch (err) {
+          reject(err);
+        }
+      });
+    });
+    req.on('error', reject);
+    req.write(payload);
+    req.end();
+  });
+}
+
+function openBrowser(url) {
   const openCmd = process.platform === 'darwin' ? 'open' : (process.platform === 'win32' ? 'start' : 'xdg-open');
   spawn(openCmd, [url], { stdio: 'ignore', detached: true }).unref();
-}, 800);
+}
 
-child.on('exit', (code) => {
-  process.exit(code || 0);
+async function main() {
+  const isRunning = await checkServerRunning();
+
+  if (isRunning) {
+    if (targetAbsPath) {
+      console.log(`🌿 Connecting to active LocalLeaf server at ${baseUrl}...`);
+      try {
+        const res = await sendOpenRequest(targetAbsPath);
+        if (res && res.project) {
+          const directUrl = `${baseUrl}/#/project/${res.project.id}`;
+          console.log(`✓ Opened "${res.project.title}" (${targetAbsPath})`);
+          console.log(`➜ ${directUrl}`);
+          openBrowser(directUrl);
+          process.exit(0);
+        }
+      } catch (err) {
+        console.error(`Failed to register folder with running server: ${err.message}`);
+      }
+    } else {
+      console.log(`🌿 LocalLeaf is already running. Opening dashboard at ${baseUrl}...`);
+      openBrowser(baseUrl);
+      process.exit(0);
+    }
+  }
+
+  // Server is not running, spawn it
+  if (targetAbsPath) {
+    const hashId = crypto.createHash('md5').update(targetAbsPath).digest('hex').substring(0, 8);
+    projectUrl = `${baseUrl}/#/project/ext_${hashId}`;
+    console.log(`🌿 Opening folder "${path.basename(targetAbsPath)}" in LocalLeaf...`);
+    console.log(`📁 Directory: ${targetAbsPath}`);
+  } else {
+    console.log(`🌿 Starting LocalLeaf on ${baseUrl}...`);
+  }
+
+  const env = { ...process.env };
+  if (targetAbsPath) {
+    env.OPEN_DIR = targetAbsPath;
+  }
+
+  const child = spawn(process.execPath, [serverPath], {
+    cwd: rootDir,
+    stdio: 'inherit',
+    env
+  });
+
+  // Open browser after server boots
+  setTimeout(() => {
+    openBrowser(projectUrl);
+  }, 800);
+
+  child.on('exit', (code) => {
+    process.exit(code || 0);
+  });
+}
+
+main().catch(err => {
+  console.error('LocalLeaf CLI error:', err);
+  process.exit(1);
 });
