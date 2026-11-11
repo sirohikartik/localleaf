@@ -20,5 +20,8 @@ projects/*/*.vrb
 projects/*/*.lot
 projects/*/*.lof
 
-# LocalLeaf user data (keep sample projects if desired, ignore local cache)
+# LocalLeaf user data & projects
+projects/proj_*
+projects/projects.json
+projects/*.pdf
 .localleaf-cache/
