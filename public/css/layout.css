@@ -1,0 +1,331 @@
+/**
+ * LocalLeaf Application Layout
+ * Responsive 3-pane split workspace with draggable dividers
+ */
+
+#app {
+  display: flex;
+  flex-direction: column;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  position: relative;
+}
+
+/* App View Containers */
+.view-container {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+.view-container.hidden {
+  display: none !important;
+}
+
+/* Top Navigation Bar */
+.top-nav {
+  height: var(--header-height);
+  background-color: var(--bg-secondary);
+  border-bottom: 1px solid var(--bg-border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 14px;
+  user-select: none;
+  z-index: 100;
+  gap: 12px;
+}
+
+.nav-left, .nav-center, .nav-right {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.nav-left {
+  flex: 0 0 auto;
+}
+
+.nav-center {
+  flex: 1 1 auto;
+  justify-content: center;
+}
+
+.nav-right {
+  flex: 0 0 auto;
+}
+
+/* Brand Logo */
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 700;
+  font-size: 16px;
+  color: var(--ol-green-primary);
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.brand-icon {
+  width: 24px;
+  height: 24px;
+  fill: currentColor;
+}
+
+.brand-text {
+  letter-spacing: -0.3px;
+}
+
+.brand-tag {
+  font-size: 10px;
+  font-weight: 600;
+  background: var(--ol-green-light);
+  color: var(--ol-green-primary);
+  padding: 2px 6px;
+  border-radius: var(--radius-sm);
+  text-transform: uppercase;
+}
+
+/* Back to Dashboard Button */
+.btn-back {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-secondary);
+  background: transparent;
+  border: 1px solid var(--bg-border);
+  border-radius: var(--radius-sm);
+  padding: 5px 10px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.btn-back:hover {
+  background-color: var(--bg-hover);
+  color: var(--text-primary);
+}
+
+/* Editable Project Title */
+.project-title-container {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.project-title-input {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-primary);
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: var(--radius-sm);
+  padding: 4px 8px;
+  max-width: 320px;
+  text-overflow: ellipsis;
+  outline: none;
+  transition: border-color 0.15s ease, background 0.15s ease;
+}
+
+.project-title-input:hover {
+  background: var(--bg-hover);
+}
+
+.project-title-input:focus {
+  background: var(--bg-primary);
+  border-color: var(--ol-green-primary);
+  box-shadow: 0 0 0 2px rgba(19, 138, 54, 0.2);
+}
+
+/* Recompile Button (Overleaf Signature) */
+.btn-recompile {
+  display: flex;
+  align-items: center;
+  background-color: var(--ol-green-primary);
+  color: #ffffff;
+  border: none;
+  border-radius: var(--radius-sm);
+  font-size: 13px;
+  font-weight: 600;
+  padding: 6px 14px;
+  cursor: pointer;
+  box-shadow: var(--shadow-sm);
+  transition: background-color 0.15s ease, transform 0.05s ease;
+  gap: 6px;
+}
+
+.btn-recompile:hover {
+  background-color: var(--ol-green-hover);
+}
+
+.btn-recompile:active {
+  background-color: var(--ol-green-active);
+  transform: translateY(1px);
+}
+
+.btn-recompile.is-compiling {
+  opacity: 0.85;
+  cursor: wait;
+}
+
+.btn-recompile.is-compiling .recompile-icon {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.recompile-shortcut {
+  font-size: 10px;
+  background: rgba(255, 255, 255, 0.25);
+  padding: 1px 5px;
+  border-radius: 3px;
+  font-family: var(--font-mono);
+  margin-left: 2px;
+}
+
+/* Status Pill */
+.status-pill {
+  font-size: 12px;
+  font-weight: 500;
+  padding: 3px 8px;
+  border-radius: var(--radius-full);
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.status-pill.success {
+  background: var(--color-success-bg);
+  color: var(--color-success);
+}
+
+.status-pill.error {
+  background: var(--color-error-bg);
+  color: var(--color-error);
+}
+
+.status-pill.warning {
+  background: var(--color-warning-bg);
+  color: var(--color-warning);
+}
+
+.status-pill.compiling {
+  background: var(--color-info-bg);
+  color: var(--color-info);
+}
+
+/* Main Split Workspace */
+.workspace-container {
+  display: flex;
+  flex: 1 1 auto;
+  overflow: hidden;
+  position: relative;
+  width: 100%;
+}
+
+/* Sidebar Pane */
+.pane-sidebar {
+  width: var(--sidebar-default-width);
+  min-width: var(--sidebar-min-width);
+  max-width: 480px;
+  height: 100%;
+  background: var(--bg-secondary);
+  border-right: 1px solid var(--bg-border);
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;
+  user-select: none;
+}
+
+.pane-sidebar.collapsed {
+  display: none !important;
+}
+
+/* Editor Pane */
+.pane-editor {
+  flex: 1 1 50%;
+  min-width: var(--editor-min-width);
+  height: 100%;
+  background: var(--bg-editor);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  position: relative;
+}
+
+/* PDF Preview Pane */
+.pane-pdf {
+  flex: 1 1 50%;
+  min-width: var(--pdf-min-width);
+  height: 100%;
+  background: var(--bg-tertiary);
+  border-left: 1px solid var(--bg-border);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  position: relative;
+}
+
+/* Draggable Splitter Divider */
+.splitter {
+  width: 6px;
+  background-color: transparent;
+  cursor: col-resize;
+  flex-shrink: 0;
+  position: relative;
+  z-index: 20;
+  transition: background-color 0.2s ease;
+}
+
+.splitter::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 2px;
+  width: 2px;
+  background-color: var(--bg-border);
+}
+
+.splitter:hover::after,
+.splitter.dragging::after {
+  background-color: var(--ol-green-primary);
+  width: 3px;
+  left: 1.5px;
+}
+
+/* Status Bar */
+.bottom-status-bar {
+  height: 24px;
+  background: var(--bg-secondary);
+  border-top: 1px solid var(--bg-border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 12px;
+  font-size: 11px;
+  color: var(--text-secondary);
+  font-family: var(--font-mono);
+  user-select: none;
+  z-index: 50;
+}
+
+.status-left, .status-right {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.status-item {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
